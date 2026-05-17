@@ -43,6 +43,6 @@ jobs:
 
       - name: Check types (attw)
         run: |
-          TARBALL=$(npm pack --quiet)
+          TARBALL=$(npm pack --quiet --ignore-scripts)
           npx attw "$TARBALL"
           rm "$TARBALL"
