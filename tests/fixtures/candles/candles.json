@@ -1,0 +1,38 @@
+{
+  "name": "candles",
+  "msg": {
+    "candles": [
+      {
+        "active_id": 1,
+        "size": 60,
+        "at": 1700000000,
+        "open": 1.08,
+        "max": 1.082,
+        "min": 1.079,
+        "close": 1.081,
+        "volume": 1500
+      },
+      {
+        "active_id": 1,
+        "size": 60,
+        "at": 1700000060,
+        "open": 1.081,
+        "max": 1.0835,
+        "min": 1.08,
+        "close": 1.0825,
+        "volume": 1200
+      },
+      {
+        "active_id": 1,
+        "size": 60,
+        "at": 1700000120,
+        "open": 1.0825,
+        "max": 1.084,
+        "min": 1.0815,
+        "close": 1.083,
+        "volume": 1800
+      }
+    ]
+  },
+  "request_id": "test-candles-001"
+}

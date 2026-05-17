@@ -1,0 +1,14 @@
+{
+  "name": "profile",
+  "msg": {
+    "ssid": "abc123testsession",
+    "user_id": 99887766,
+    "email": "test@example.com",
+    "first_name": "Test",
+    "last_name": "User",
+    "balance": 10000.0,
+    "currency": "USD",
+    "currency_char": "$"
+  },
+  "request_id": "test-req-001"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "candle-generated",
+  "msg": {
+    "active_id": 1,
+    "size": 60,
+    "at": 1700000180,
+    "open": 1.083,
+    "max": 1.0845,
+    "min": 1.082,
+    "close": 1.0838,
+    "volume": 950
+  }
+}

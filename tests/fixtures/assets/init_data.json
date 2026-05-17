@@ -1,0 +1,36 @@
+{
+  "name": "init_data",
+  "msg": {
+    "instruments": [
+      {
+        "id": 1,
+        "name": "EURUSD",
+        "precision": 5,
+        "suspended": false,
+        "is_otc": false,
+        "option": { "profit": 80 },
+        "digital_profit": 90,
+        "schedule": [{ "open": 1700000000, "close": 1700086400 }]
+      },
+      {
+        "id": 76,
+        "name": "EURUSD-OTC",
+        "precision": 5,
+        "suspended": false,
+        "option": { "profit": 75 },
+        "digital_profit": 85,
+        "schedule": []
+      },
+      {
+        "id": 2,
+        "name": "GBPUSD",
+        "precision": 5,
+        "suspended": true,
+        "is_otc": false,
+        "option": { "profit": 80 },
+        "digital_profit": 90,
+        "schedule": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "authorization",
+  "msg": {
+    "isSuccessful": false,
+    "message": "Invalid credentials"
+  },
+  "request_id": "test-req-002"
+}

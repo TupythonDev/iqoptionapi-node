@@ -1,0 +1,12 @@
+{
+  "name": "option",
+  "msg": {
+    "id": "order-abc-123",
+    "active_id": 1,
+    "direction": "call",
+    "win": "win",
+    "profit_amount": 8.0,
+    "close_rate": 1.0812,
+    "close_time": 1700000060
+  }
+}

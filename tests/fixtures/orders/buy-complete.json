@@ -1,0 +1,16 @@
+{
+  "name": "buy-complete",
+  "msg": {
+    "id": "order-abc-123",
+    "active_id": 1,
+    "direction": "call",
+    "price": 10.0,
+    "profit_percent": 80,
+    "profit_amount": null,
+    "status": "open",
+    "open_time": 1700000000,
+    "exp": 1700000060,
+    "option_type_id": 1
+  },
+  "request_id": "test-request-uuid"
+}
