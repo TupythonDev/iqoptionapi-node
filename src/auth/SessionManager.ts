@@ -6,7 +6,7 @@ import { AuthenticationError } from '../errors';
 function toProfile(raw: IQRawProfile, accountType: AccountType): IQProfile {
   return {
     ssid: raw.ssid,
-    userId: raw.user_id,
+    userId: (raw.user_id ?? raw.id) as number,
     email: raw.email,
     firstName: raw.first_name,
     lastName: raw.last_name,

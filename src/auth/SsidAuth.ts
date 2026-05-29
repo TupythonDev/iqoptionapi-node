@@ -23,16 +23,14 @@ export class SsidAuth {
         this.router.unregisterHandler(V1Adapter.profile, onProfile);
 
         const raw = msg.msg as Record<string, unknown>;
-        if (raw['isSuccessful'] === false) {
-          reject(new AuthenticationError('SESSION_EXPIRED'));
-          return;
-        }
-        if (!('ssid' in raw) || typeof raw['ssid'] !== 'string') {
+        if (!raw['user_id'] && !raw['id']) {
           reject(new AuthenticationError('SESSION_EXPIRED'));
           return;
         }
         try {
-          resolve(this.session.store(msg.msg as IQRawProfile));
+          // Server returns ssid: false in the profile; inject the known ssid
+          const profileRaw = { ...raw, ssid } as unknown as IQRawProfile;
+          resolve(this.session.store(profileRaw));
         } catch (err) {
           reject(err instanceof Error ? err : new AuthenticationError(String(err)));
         }

@@ -45,6 +45,21 @@ describe('SsidAuth', () => {
     expect(session.isAuthenticated).toBe(true);
   });
 
+  it('restore() injects the sent ssid even when server returns ssid: false', async () => {
+    const { router, fireProfile } = makeRouter();
+    const auth = new SsidAuth(router, session);
+
+    const promise = auth.restore('abc123testsession');
+    const withFalseSsid = {
+      ...profileFixture,
+      msg: { ...profileFixture.msg, ssid: false },
+    } as unknown as IQRawMessage;
+    fireProfile(withFalseSsid);
+    const profile = await promise;
+
+    expect(profile.ssid).toBe('abc123testsession');
+  });
+
   it('restore() sends ssid message to the router', async () => {
     const { router, fireProfile } = makeRouter();
     const auth = new SsidAuth(router, session);
@@ -70,19 +85,7 @@ describe('SsidAuth', () => {
     );
   });
 
-  it('restore() throws AuthenticationError(SESSION_EXPIRED) when server returns isSuccessful=false', async () => {
-    const { router, fireProfile } = makeRouter();
-    const auth = new SsidAuth(router, session);
-
-    const promise = auth.restore('expired-token');
-    fireProfile({ name: 'profile', msg: { isSuccessful: false } });
-
-    const err = await promise.catch((e: unknown) => e);
-    expect(err).toBeInstanceOf(AuthenticationError);
-    expect((err as AuthenticationError).message).toBe('SESSION_EXPIRED');
-  });
-
-  it('restore() throws AuthenticationError(SESSION_EXPIRED) when response has no ssid', async () => {
+  it('restore() throws AuthenticationError(SESSION_EXPIRED) when response has no user id', async () => {
     const { router, fireProfile } = makeRouter();
     const auth = new SsidAuth(router, session);
 

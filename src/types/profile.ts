@@ -3,7 +3,9 @@ import type { AccountType } from './primitives';
 /** Raw wire format received from IQOption server (snake_case). */
 export interface IQRawProfile {
   ssid: string;
-  user_id: number;
+  /** Top-level profile uses `id`; balance entries use `user_id`. Accept both. */
+  user_id?: number;
+  id?: number;
   email: string;
   first_name: string;
   last_name: string;
