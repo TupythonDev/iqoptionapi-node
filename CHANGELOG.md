@@ -1,3 +1,9 @@
+## [1.1.2](https://github.com/TupythonDev/iqoptionapi-node/compare/v1.1.1...v1.1.2) (2026-05-29)
+
+### Bug Fixes
+
+- switch auth to HTTP login + WebSocket SSID flow ([8f54c4c](https://github.com/TupythonDev/iqoptionapi-node/commit/8f54c4c18303975368c080f82b25d62fd62ad0b5))
+
 ## [1.1.1](https://github.com/TupythonDev/iqoptionapi-node/compare/v1.1.0...v1.1.1) (2026-05-29)
 
 ### Bug Fixes
