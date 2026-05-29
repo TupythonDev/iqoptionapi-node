@@ -1,13 +1,11 @@
 import type { MessageRouter } from '../transport/MessageRouter';
 import type { SessionManager } from './SessionManager';
 import type { IQProfile, IQRawProfile } from '../types/profile';
-import { AuthenticationError } from '../errors';
+import type { IQRawMessage } from '../types/messages';
+import { AuthenticationError, TimeoutError } from '../errors';
 import { V1Adapter } from '../protocol/V1Adapter';
 
-interface SsidResponse {
-  isSuccessful?: boolean;
-  ssid?: string;
-}
+const SSID_TIMEOUT_MS = 10_000;
 
 export class SsidAuth {
   private readonly router: MessageRouter;
@@ -18,22 +16,35 @@ export class SsidAuth {
     this.session = session;
   }
 
-  async restore(ssid: string): Promise<IQProfile> {
-    const response = await this.router.sendRequest<SsidResponse | IQRawProfile>(
-      V1Adapter.ssid,
-      ssid,
-    );
+  restore(ssid: string): Promise<IQProfile> {
+    return new Promise<IQProfile>((resolve, reject) => {
+      const onProfile = (msg: IQRawMessage) => {
+        clearTimeout(timer);
+        this.router.unregisterHandler(V1Adapter.profile, onProfile);
 
-    const msg = response.msg as Record<string, unknown>;
+        const raw = msg.msg as Record<string, unknown>;
+        if (raw['isSuccessful'] === false) {
+          reject(new AuthenticationError('SESSION_EXPIRED'));
+          return;
+        }
+        if (!('ssid' in raw) || typeof raw['ssid'] !== 'string') {
+          reject(new AuthenticationError('SESSION_EXPIRED'));
+          return;
+        }
+        try {
+          resolve(this.session.store(msg.msg as IQRawProfile));
+        } catch (err) {
+          reject(err instanceof Error ? err : new AuthenticationError(String(err)));
+        }
+      };
 
-    if ('isSuccessful' in msg && msg['isSuccessful'] === false) {
-      throw new AuthenticationError('SESSION_EXPIRED');
-    }
+      const timer = setTimeout(() => {
+        this.router.unregisterHandler(V1Adapter.profile, onProfile);
+        reject(new TimeoutError(`Request 'ssid' timed out after ${String(SSID_TIMEOUT_MS)}ms`));
+      }, SSID_TIMEOUT_MS);
 
-    if (!('ssid' in msg) || typeof msg['ssid'] !== 'string') {
-      throw new AuthenticationError('SESSION_EXPIRED');
-    }
-
-    return this.session.store(response.msg as IQRawProfile);
+      this.router.registerHandler(V1Adapter.profile, onProfile);
+      this.router.sendMessage(V1Adapter.ssid, ssid);
+    });
   }
 }

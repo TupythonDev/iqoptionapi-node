@@ -1,47 +1,80 @@
-import type { MessageRouter } from '../transport/MessageRouter';
+import https from 'https';
+import type { SsidAuth } from './SsidAuth';
 import type { CredentialProvider } from './CredentialAbstraction';
 import { sanitizeLog } from './CredentialAbstraction';
-import type { SessionManager } from './SessionManager';
-import type { IQProfile, IQRawProfile } from '../types/profile';
+import type { IQProfile } from '../types/profile';
 import { AuthenticationError } from '../errors';
-import { V1Adapter } from '../protocol/V1Adapter';
 
-interface AuthResponse {
-  isSuccessful: boolean;
-  message?: string;
-  ssid?: string;
+interface LoginApiResponse {
+  data?: { ssid?: string };
+  code?: string;
+  errors?: Array<{ code: number; title: string }>;
+}
+
+function httpLogin(identifier: string, password: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const body = JSON.stringify({ identifier, password });
+    const req = https.request(
+      {
+        hostname: 'auth.iqoption.com',
+        path: '/api/v1.0/login',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(body),
+        },
+      },
+      (res) => {
+        let raw = '';
+        res.on('data', (chunk: Buffer) => (raw += chunk.toString()));
+        res.on('end', () => {
+          // SSID from Set-Cookie header
+          const cookies = res.headers['set-cookie'] ?? [];
+          for (const cookie of cookies) {
+            const m = /ssid=([^;]+)/.exec(cookie);
+            if (m?.[1]) {
+              resolve(m[1]);
+              return;
+            }
+          }
+          // SSID from response body
+          try {
+            const json = JSON.parse(raw) as LoginApiResponse;
+            if (json.data?.ssid) {
+              resolve(json.data.ssid);
+              return;
+            }
+            const title = json.errors?.[0]?.title ?? 'Authentication failed';
+            reject(new AuthenticationError(title));
+          } catch {
+            reject(new AuthenticationError('Unexpected login response'));
+          }
+        });
+      },
+    );
+    req.on('error', (err: Error) => {
+      reject(new AuthenticationError(err.message));
+    });
+    req.write(body);
+    req.end();
+  });
 }
 
 export class EmailPasswordAuth {
-  private readonly router: MessageRouter;
-  private readonly session: SessionManager;
+  private readonly ssidAuth: SsidAuth;
 
-  constructor(router: MessageRouter, session: SessionManager) {
-    this.router = router;
-    this.session = session;
+  constructor(ssidAuth: SsidAuth) {
+    this.ssidAuth = ssidAuth;
   }
 
   async login(credentials: CredentialProvider): Promise<IQProfile> {
     const { identifier, password } = credentials.provide();
     try {
-      const response = await this.router.sendRequest<AuthResponse | IQRawProfile>(
-        V1Adapter.authorization,
-        { identifier, password },
-      );
-
-      // The server either responds with a profile directly (success)
-      // or with an authorization result containing isSuccessful: false (failure).
-      const msg = response.msg as unknown as Record<string, unknown>;
-      if ('isSuccessful' in msg && msg['isSuccessful'] === false) {
-        const detail = typeof msg['message'] === 'string' ? msg['message'] : 'Invalid credentials';
-        throw new AuthenticationError(sanitizeLog(detail, password, identifier));
-      }
-
-      if (!('ssid' in msg) || typeof msg['ssid'] !== 'string') {
-        throw new AuthenticationError('Unexpected authorization response from server');
-      }
-
-      return this.session.store(response.msg as IQRawProfile);
+      const ssid = await httpLogin(identifier, password);
+      return await this.ssidAuth.restore(ssid);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      throw new AuthenticationError(sanitizeLog(msg, password, identifier));
     } finally {
       credentials.zero();
     }

@@ -61,8 +61,8 @@ export class IQOptionClient {
     this.router = new MessageRouter(this.transport);
     this.reconnection = new ReconnectionManager(this.transport, maxRetries);
     this.session = new SessionManager(logger);
-    this.emailAuth = new EmailPasswordAuth(this.router, this.session);
     this.ssidAuth = new SsidAuth(this.router, this.session);
+    this.emailAuth = new EmailPasswordAuth(this.ssidAuth);
     this.catalog = new AssetCatalog(this.router);
     this.historical = new HistoricalCandles(this.router, this.catalog);
     this.candleStream = new CandleStream(this.router, this.catalog, this.reconnection);
