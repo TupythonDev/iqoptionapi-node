@@ -1,3 +1,9 @@
+## [1.1.3](https://github.com/TupythonDev/iqoptionapi-node/compare/v1.1.2...v1.1.3) (2026-05-29)
+
+### Bug Fixes
+
+- handle ssid:false in profile response and id vs user_id field ([0534d57](https://github.com/TupythonDev/iqoptionapi-node/commit/0534d5755ef4baef8c7e2a4b46b7cbe3bc50c330))
+
 ## [1.1.2](https://github.com/TupythonDev/iqoptionapi-node/compare/v1.1.1...v1.1.2) (2026-05-29)
 
 ### Bug Fixes
