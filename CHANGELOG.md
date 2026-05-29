@@ -1,3 +1,9 @@
+## [1.1.1](https://github.com/TupythonDev/iqoptionapi-node/compare/v1.1.0...v1.1.1) (2026-05-29)
+
+### Bug Fixes
+
+- migrate build to tsup for correct CJS/ESM dual output ([0407c80](https://github.com/TupythonDev/iqoptionapi-node/commit/0407c80273f915d81078d10cfc1426104049443b))
+
 # [1.1.0](https://github.com/TupythonDev/iqoptionapi-node/compare/v1.0.0...v1.1.0) (2026-05-29)
 
 ### Features
