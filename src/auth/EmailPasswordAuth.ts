@@ -13,7 +13,7 @@ interface LoginApiResponse {
 
 function httpLogin(identifier: string, password: string): Promise<string> {
   return new Promise((resolve, reject) => {
-    const body = JSON.stringify({ identifier, password });
+    const body = JSON.stringify({ email: identifier, password });
     const req = https.request(
       {
         hostname: 'auth.iqoption.com',
@@ -22,6 +22,9 @@ function httpLogin(identifier: string, password: string): Promise<string> {
         headers: {
           'Content-Type': 'application/json',
           'Content-Length': Buffer.byteLength(body),
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+          Origin: 'https://iqoption.com',
+          Referer: 'https://iqoption.com/',
         },
       },
       (res) => {
