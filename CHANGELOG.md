@@ -1,3 +1,9 @@
+## [1.1.4](https://github.com/TupythonDev/iqoptionapi-node/compare/v1.1.3...v1.1.4) (2026-05-29)
+
+### Bug Fixes
+
+- use email field and browser headers in HTTP login request ([550cdcd](https://github.com/TupythonDev/iqoptionapi-node/commit/550cdcd10755e71c6fec24d92258ca45fffaba26))
+
 ## [1.1.3](https://github.com/TupythonDev/iqoptionapi-node/compare/v1.1.2...v1.1.3) (2026-05-29)
 
 ### Bug Fixes
