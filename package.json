@@ -2,15 +2,20 @@
   "name": "iqoptionapi-node",
   "version": "1.1.0",
   "description": "TypeScript SDK for the IQOption WebSocket API",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "types": "dist/cjs/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "type": "commonjs",
   "exports": {
     ".": {
-      "types": "./dist/cjs/index.d.ts",
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js"
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
     }
   },
   "files": [
@@ -32,7 +37,7 @@
     "url": "https://github.com/TupythonDev/iqoptionapi-node/issues"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.cjs.json && tsc -p tsconfig.esm.json && node -e \"require('fs').writeFileSync('dist/esm/package.json', JSON.stringify({type:'module'},null,2))\"",
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "typecheck": "tsc --noEmit",
     "test": "jest --testPathPattern=tests/unit --passWithNoTests",
     "test:integration": "jest --passWithNoTests",
@@ -77,6 +82,7 @@
     "semantic-release": "^25.0.3",
     "ts-jest": "^29.3.4",
     "ts-node": "^10.9.2",
+    "tsup": "^8.5.1",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.32.1"
   }
